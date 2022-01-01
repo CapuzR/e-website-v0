@@ -45,7 +45,7 @@ module.exports = {
   entry: {
     // The frontend.entrypoint points to the HTML file for this build, so we need
     // to replace the extension to `.js`.
-    index: path.join(__dirname, asset_entry).replace(/\.html$/, ".js"),
+    index: path.join(__dirname, asset_entry).replace(/\.html$/, ".jsx"),
   },
   devtool: isDevelopment ? "source-map" : false,
   optimization: {
@@ -53,6 +53,9 @@ module.exports = {
     minimizer: [new TerserPlugin()],
   },
   resolve: {
+    modules: [
+        path.join(__dirname, 'node_modules')
+    ],
     extensions: [".js", ".ts", ".jsx", ".tsx"],
     fallback: {
       assert: require.resolve("assert/"),
@@ -72,12 +75,36 @@ module.exports = {
   // webpack configuration. For example, if you are using React
   // modules and CSS as described in the "Adding a stylesheet"
   // tutorial, uncomment the following lines:
-  // module: {
-  //  rules: [
-  //    { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
-  //    { test: /\.css$/, use: ['style-loader','css-loader'] }
-  //  ]
-  // },
+  module: {
+   rules: [
+     { test: /\.ts|.js$|tsx|jsx/, loader: "ts-loader" },
+     { test: /\.css$/, use: ['style-loader','css-loader'] },
+     {
+      test: /\.(png|jp(e*)g|svg|mp4|gif)$/,
+      use: [
+        {
+          loader: 'file-loader',
+          options: {
+            name: 'assets/[hash]-[name].[ext]',
+          },
+        },
+      ],
+    },
+    {
+      test: /\.(glb|gltf)$/,
+      use:
+      [
+          {
+              loader: 'file-loader',
+              options:
+              {
+                  outputPath: 'assets/models/'
+              }
+          }
+      ]
+  },
+   ]
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, asset_entry),
@@ -93,7 +120,15 @@ module.exports = {
     }),
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      A3CAPASUNIVERSO_CANISTER_ID: canisters["a3capasUniverso"]
+      FM_CANISTER_ID: "k4qsa-4aaaa-aaaah-qbvnq-cai" // production FM canister
+    }),
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development',
+      WP_CANISTER_ID: "wrcb3-5qaaa-aaaal-qaahq-cai" // production WP canister
+    }),
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development',
+      A3CAPASUNIVERSO_ASSETS_CANISTER_ID: canisters["a3capasUniverso_assets"]
     }),
     new webpack.ProvidePlugin({
       Buffer: [require.resolve("buffer/"), "Buffer"],
@@ -112,7 +147,8 @@ module.exports = {
       },
     },
     hot: true,
-    contentBase: path.resolve(__dirname, "./src/a3capasUniverso_assets"),
-    watchContentBase: true
+    static: {
+      directory: path.join(__dirname, './dist')
+    },
   },
 };

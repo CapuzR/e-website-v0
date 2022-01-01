@@ -1,13 +1,6 @@
 {
   "canisters": {
-    "a3capasUniverso": {
-      "main": "src/a3capasUniverso/main.mo",
-      "type": "motoko"
-    },
     "a3capasUniverso_assets": {
-      "dependencies": [
-        "a3capasUniverso"
-      ],
       "frontend": {
         "entrypoint": "src/a3capasUniverso_assets/src/index.html"
       },
@@ -17,19 +10,5 @@
       ],
       "type": "assets"
     }
-  },
-  "defaults": {
-    "build": {
-      "args": "",
-      "packtool": ""
-    }
-  },
-  "dfx": "0.8.1",
-  "networks": {
-    "local": {
-      "bind": "127.0.0.1:8000",
-      "type": "ephemeral"
-    }
-  },
-  "version": 1
+  }
 }
